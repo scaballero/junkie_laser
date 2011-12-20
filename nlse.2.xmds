@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<simulation xmds-version="2">
+  <name>nlse</name>
+
+  <author>Viktor Gal and Santiago Caballero</author>
+  <description>
+    The nonlinear Schrodinger equation in two dimension.
+  </description>
+
+  <features>
+      <benchmark />
+      <bing />
+      <fftw plan="patient" />
+      <openmp />
+      <auto_vectorise />
+  </features>
+
+  <geometry>
+      <propagation_dimension> t </propagation_dimension>
+      <transverse_dimensions>
+        <dimension name="x" lattice="256"  domain="(-15, 15)" />
+        <dimension name="y" lattice="256"  domain="(-15, 15)" />
+      </transverse_dimensions>
+   </geometry>
+
+  <vector name="wavefunction" type="complex" dimensions="x y">
+    <components> phi </components>
+    <initialisation>
+      <![CDATA[
+	  phi = 10*exp(-4*x*x-9*y*y);
+      ]]>
+    </initialisation>
+  </vector>
+
+  <sequence>
+    <integrate algorithm="ARK45" interval="2.0" tolerance="1e-7">
+      <samples>50</samples>
+      <operators>
+        <integration_vectors>wavefunction</integration_vectors>
+        <operator kind="ex" constant="yes">
+          <operator_names>Ltt</operator_names>
+          <![CDATA[
+            Ltt = -i*(kx*kx+ky*ky)*0.5;
+          ]]>
+        </operator>
+        <![CDATA[
+        dphi_dt = Ltt[phi]-i*mod2(phi)*phi;
+        ]]>
+      </operators>
+    </integrate>
+  </sequence>
+
+  <output format="binary" filename="nlse_2.xsil">
+    <group>
+      <sampling basis="x y " initial_sample="yes">
+        <moments>density</moments>
+        <dependencies>wavefunction</dependencies>
+        <![CDATA[
+          density = mod2(phi);
+        ]]>
+      </sampling>
+    </group>
+  </output>
+</simulation>
+

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<simulation xmds-version="2">
+  <name>nlse3</name>
+
+  <author>Viktor Gal and Santiago Caballero</author>
+  <description>
+    The nonlinear Schrodinger equation in three dimension.
+  </description>
+
+  <features>
+      <benchmark />
+      <bing />
+      <fftw plan="patient" />
+      <openmp />
+   	  <globals>
+          <![CDATA[
+          const double A = 1.0;
+		  const double tCoeff = 1.0;
+          ]]>
+       </globals>
+      <auto_vectorise />
+  </features>
+
+  <geometry>
+      <propagation_dimension> z </propagation_dimension>
+      <transverse_dimensions>
+        <dimension name="x" lattice="128"  domain="(-6, 6)" />
+        <dimension name="y" lattice="128"  domain="(-6, 6)" />
+		<dimension name="t" lattice="128" domain="(-6, 6)" />
+      </transverse_dimensions>
+   </geometry>
+
+  <vector name="wavefunction" type="complex" dimensions="x y t">
+    <components> phi </components>
+    <initialisation>
+      <![CDATA[
+	  phi = A*sqrt(2)*exp(-1*(x*x+y*y)/2-t*t);
+      ]]>
+    </initialisation>
+  </vector>
+
+  <sequence>
+    <integrate algorithm="ARK45" interval="2.0" tolerance="1e-7">
+      <samples>50</samples>
+      <operators>
+        <integration_vectors>wavefunction</integration_vectors>
+        <operator kind="ex" constant="yes">
+          <operator_names>Ltt</operator_names>
+          <![CDATA[
+            Ltt = -i*((kx*kx+ky*ky)*0.5+kt*kt*tCoeff);
+          ]]>
+        </operator>
+        <![CDATA[
+        dphi_dz = Ltt[phi]-i*mod2(phi)*phi;
+        ]]>
+      </operators>
+    </integrate>
+  </sequence>
+
+  <output format="binary" filename="nlse3.xsil">
+    <group>
+      <sampling basis="x y t " initial_sample="yes">
+        <moments>density</moments>
+        <dependencies>wavefunction</dependencies>
+        <![CDATA[
+          density = mod2(phi);
+        ]]>
+      </sampling>
+    </group>
+  </output>
+</simulation>
+
