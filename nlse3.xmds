@@ -10,7 +10,7 @@
   <features>
       <benchmark />
       <bing />
-      <fftw plan="patient" />
+      <fftw plan="patient" threads="2" />
       <openmp />
    	  <globals>
           <![CDATA[
