@@ -21,6 +21,11 @@
       <auto_vectorise />
   </features>
 
+  <!-- 
+    Tag for using MPI
+  <driver name="distributed-mpi" />
+  -->
+
   <geometry>
       <propagation_dimension> z </propagation_dimension>
       <transverse_dimensions>
