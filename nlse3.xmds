@@ -15,7 +15,7 @@
    	  <globals>
           <![CDATA[
           const double A = 1.0;
-		  const double tCoeff = 1.0;
+	  const double tCoeff = 2.0;
           ]]>
        </globals>
       <auto_vectorise />
@@ -24,9 +24,9 @@
   <geometry>
       <propagation_dimension> z </propagation_dimension>
       <transverse_dimensions>
-        <dimension name="x" lattice="128"  domain="(-6, 6)" />
-        <dimension name="y" lattice="128"  domain="(-6, 6)" />
-		<dimension name="t" lattice="128" domain="(-6, 6)" />
+        <dimension name="x" lattice="256"  domain="(-20, 20)" />
+        <dimension name="y" lattice="256"  domain="(-20, 20)" />
+	<dimension name="t" lattice="256" domain="(0, 40)" />
       </transverse_dimensions>
    </geometry>
 
@@ -40,8 +40,8 @@
   </vector>
 
   <sequence>
-    <integrate algorithm="ARK45" interval="2.0" tolerance="1e-7">
-      <samples>50</samples>
+    <integrate algorithm="ARK45" interval="0.5" tolerance="1e-7">
+      <samples>9</samples>
       <operators>
         <integration_vectors>wavefunction</integration_vectors>
         <operator kind="ex" constant="yes">
